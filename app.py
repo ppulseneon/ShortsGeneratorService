@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, redirect
 
+from handlers.prepare_video import prepare_video
 from settings.static_files import fonts_list, format_types_list, primary_videos, music_list
 from settings.swagger_settings import swagger_ui_blueprint, SWAGGER_URL
 
@@ -17,7 +18,7 @@ def hello_world():
 Получить Short из видео
 """
 @app.route('/video', methods=['POST'])
-def prepare_video():
+def create_prepare_video():
     data = request.get_json()
     result = prepare_video(data)
     return result

@@ -101,6 +101,10 @@
     "VideoPrepareModel": {
       "type": "object",
       "properties": {
+        "original_id": {
+          "type": "integer",
+          "description": "Id оригинального видео на файловом сервере"
+        },
         "video": {
           "type": "string",
           "description": "Название видео в хранилище"
@@ -108,6 +112,14 @@
         "format_type": {
           "type": "integer",
           "description": "Формат видео, где значения от 0 до 5"
+        },
+        "short_timestamps_start": {
+          "type": "number",
+          "description": "Секунды начала короткого видео"
+        },
+        "short_timestamps_end": {
+          "type": "number",
+          "description": "Секунды конца короткого видео"
         },
         "primary_video": {
           "type": "string",
