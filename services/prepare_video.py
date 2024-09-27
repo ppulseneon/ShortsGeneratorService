@@ -61,7 +61,25 @@ class PrepareVideo:
         pass
 
     def set_background_music(self, music_path: str, volume: float = 1, offset: int = 0, finish: int = 0):
-        pass
+
+        # Указываем аудиодорожку
+        audio_clip = AudioFileClip(music_path)
+
+        # Подрезаем начало и конец накладываемого трека
+        audio_clip = audio_clip.subclip(offset, audio_clip.duration - finish)
+
+        # Проверка тречка
+        if audio_clip.duration == 0:
+            raise ValueError("Audio clip has zero duration")
+
+        # Получаем текущую дорожку из видео
+        clip_audio = self.clip.audio
+
+        # Смешиваем обе дорожки в одну
+        final_audio = CompositeAudioClip([clip_audio, audio_clip])
+
+        # Устанавливаем аудиодорожку видео
+        self.clip = self.clip.set_audio(final_audio)
 
     def set_face_tracking(self):
         # todo: Подумать над реализацией этой идеи

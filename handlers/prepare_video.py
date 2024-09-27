@@ -1,8 +1,8 @@
 from flask import jsonify
 
 from services.prepare_video import PrepareVideo
-from tools.downloader import download_video
-from tools.paths import get_random_mp4_path
+from tools.downloader import download_media
+from tools.paths import get_random_mp4_path, get_random_path, get_static_file
 from tools.validation import validate_required_fields
 
 required_fields = {
@@ -10,6 +10,7 @@ required_fields = {
     'video': str,
     'short_timestamps_start': float,
     'short_timestamps_end': float,
+    'music_file_type': int,
 }
 
 """
@@ -28,17 +29,52 @@ def prepare_video(data):
     try:
         video_path = get_random_mp4_path()
 
-        video = download_video(data['video'], video_path)
-        primary_video_path = data.get('primary_video')
+        original_id = int(data['original_id'])
+
+        video = download_media(data['video'], video_path)
+        format_type = int(data['format_type'])
         short_timestamp_start = data.get('short_timestamps_start')
         short_timestamp_end = data.get('short_timestamps_end')
-        original_id = int(data['original_id'])
-        format_type = int(data['format_type'])
+
+        primary_video_path = data.get('primary_video')
+
         subtitles = int(data['subtitles'])
+
+        music_file_type = int(data['music_file_type'])
+        music = data.get('music')
+        music_volume = data.get('music_volume')
+        music_offset = data.get('music_offset')
+        music_finish = data.get('music_finish')
+
 
         short_timestamp = (short_timestamp_start, short_timestamp_end)
 
         prepare = PrepareVideo(video, short_timestamps=short_timestamp, primary_video_path=primary_video_path, format_type=format_type, original_id=original_id)
+
+        # Проверка наложения фоновой музыки
+        if music_file_type != -1:
+
+            # Проверка есть ли ссылка на песню/файл
+            if not music:
+                raise Exception(f"Music is required when music_file_type is not -1")
+
+            # Инициализация пустого пути
+            music_path = ''
+
+            # По файлу
+            if music_file_type == 1:
+                music_path = get_static_file(music)
+
+            # По ссылке
+            if music_file_type == 1:
+                music_path = get_random_path('mp3')
+                download_media(music, music_path)
+
+            # валидация полей
+            if music_volume or music_finish or music_offset:
+                raise Exception(f"Not all fields of music have been transferred")
+
+            prepare.set_background_music(music_path, music_volume, music_offset, music_finish)
 
         result = prepare.render()
 
