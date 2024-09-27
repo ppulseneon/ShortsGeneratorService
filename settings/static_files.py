@@ -44,10 +44,14 @@ fonts_list = [
     }
 ]
 
-music_list = [
-
+primary_videos = [
+    {
+        "name": "Minecraft паркур",
+        "preview": "https://i.imgur.com/7mu1V27.png",
+        "filename": "minecraft_parkour_1.mp4"
+    }
 ]
 
-primary_videos = [
+music_list = [
 
 ]

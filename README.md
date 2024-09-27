@@ -8,3 +8,6 @@
 1.  Запускаем файл `app.py`
 2.  Роуты апи расположены на `localhost:8000/swagger`
 
+## Настройка статичных файлов
+
+Настройка статичных файлов происходит [static_files.py](settings%2Fstatic_files.py): указываем в списки этого файла и добавляем в папки `static/fonts` или `static/music` или `static/fonts`
