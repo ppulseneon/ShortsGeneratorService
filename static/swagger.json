@@ -1,0 +1,136 @@
+{
+    "swagger" :  "2.0" ,
+    "info" :  {
+      "title" :  "API доступа" ,
+      "version" :  "0.0.1"
+    },
+    "paths": {
+      "/video/format_type": {
+        "get": {
+          "description": "Получить список возможных форматов видео",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список форматов видео"
+            }
+          }
+        }
+      },
+      "/video/subtitles/fonts": {
+        "get": {
+          "description": "Получить список возможных шрифтов видео",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список шрифтов для видео"
+            }
+          }
+        }
+      },
+      "/video": {
+        "post": {
+          "description": "Обработать короткое видео",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "name": "Data",
+              "in": "body",
+              "description": "Тело запроса",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/VideoPrepareModel"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "URL на видео"
+            }
+          }
+        }
+      }
+    },
+  "definitions": {
+    "VideoPrepareModel": {
+      "type": "object",
+      "properties": {
+        "video": {
+          "type": "string",
+          "description": "Название видео в хранилище"
+        },
+        "format_type": {
+          "type": "integer",
+          "description": "Формат видео, где значения от 0 до 5"
+        },
+        "primary_video": {
+          "type": "string",
+          "description": "Название дополнительного (завлекающего) видео в хранилище (указывать при format_type от 4 до 5)"
+        },
+        "subtitles": {
+          "type": "integer",
+          "description": "Тип субтитров, где значение от 0 до 2 (-1 обозначает, что их нет)"
+        },
+        "subtitles_json":{
+          "type": "string",
+          "description": "Субтитры"
+        },
+        "subtitles_position": {
+          "type": "integer",
+          "description": "Номер позиции субтитров, где значения от 0 до 2 (сверху, посредине, снизу)"
+        },
+        "subtitles_font": {
+          "type": "string",
+          "description": "Название субтитров"
+        },
+        "subtitles_color": {
+          "type": "string",
+          "description": "Цвет текста субтитров (в любом формате)"
+        },
+        "subtitles_primary_color": {
+          "type": "string",
+          "description": "Цвет фона или обводки субтитров (в любом формате)"
+        },
+        "face_focusing": {
+          "type": "boolean",
+          "description": "Фокусировка лица на видео (экспериментально)"
+        },
+        "music_file_type": {
+          "type": "integer",
+          "description": "Тип вида передаваемой музыки: 0 - это из хранилища, 1 по ссылке, -1 музыки нет"
+        },
+        "music": {
+          "type": "string",
+          "description": "Ссылка на песню или название файла (в зависимости от типа)"
+        },
+        "music_volume": {
+          "type": "number",
+          "description": "Громкость музыки (где 1 - 100%, 2 - 200%)"
+        },
+        "music_offset": {
+          "type": "number",
+          "description": "Смещение начала трека (секунд от начала)"
+        },
+        "music_finish": {
+          "type": "number",
+          "description": "Смещение конца трека"
+        }
+      },
+       "required": ["video", "format_type", "subtitles", "face_focusing", "music_file_type"]
+    }
+  }
+}
