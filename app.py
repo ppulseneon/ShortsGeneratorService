@@ -18,35 +18,37 @@ def hello_world():
 """
 @app.route('/video', methods=['POST'])
 def prepare_video():
-    return jsonify({"status": "ok", "result": "<insert url>"}), 200
+    data = request.get_json()
+    result = prepare_video(data)
+    return result
 
 """
 Получить доступные форматы видео
 """
 @app.route('/video/format_type', methods=['GET'])
 def get_format_type():
-    return jsonify(format_types_list), 200
+    return jsonify(format_types_list)
 
 """
 Получить доступные шрифты для субтитров
 """
 @app.route('/video/subtitles/fonts', methods=['GET'])
 def get_fonts():
-    return jsonify(fonts_list), 200
+    return jsonify(fonts_list)
 
 """
 Получить доступные завлекающие видео
 """
 @app.route('/video/primary_videos', methods=['GET'])
-def get_fonts():
-    return jsonify(primary_videos), 200
+def get_primary_videos():
+    return jsonify(primary_videos)
 
 """
 Получить доступную фоновую музыку
 """
 @app.route('/video/music', methods=['GET'])
-def get_fonts():
-    return jsonify(music_list), 200
+def get_music():
+    return jsonify(music_list)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

@@ -5,38 +5,6 @@
       "version" :  "0.0.1"
     },
     "paths": {
-      "/video/format_type": {
-        "get": {
-          "description": "Получить список возможных форматов видео",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "Список форматов видео"
-            }
-          }
-        }
-      },
-      "/video/subtitles/fonts": {
-        "get": {
-          "description": "Получить список возможных шрифтов видео",
-          "consumes": [
-            "application/json"
-          ],
-          "produces": [
-            "application/json"
-          ],
-          "responses": {
-            "200": {
-              "description": "Список шрифтов для видео"
-            }
-          }
-        }
-      },
       "/video": {
         "post": {
           "description": "Обработать короткое видео",
@@ -60,6 +28,70 @@
           "responses": {
             "200": {
               "description": "URL на видео"
+            }
+          }
+        }
+      },
+      "/video/format_type": {
+        "get": {
+          "description": "Получить список возможных форматов видео",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список форматов видео"
+            }
+          }
+        }
+      },
+      "/video/subtitles/fonts": {
+        "get": {
+          "description": "Получить список возможных шрифтов для субтитров",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список шрифтов для видео"
+            }
+          }
+        }
+      },
+      "/video/primary_videos": {
+        "get": {
+          "description": "Получить список возможных видео для привлечения внимания",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список видео для привлечения внимания"
+            }
+          }
+        }
+      },
+      "/video/music": {
+        "get": {
+          "description": "Получить список возможной фоновой музыки",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список фоновой музыки"
             }
           }
         }
