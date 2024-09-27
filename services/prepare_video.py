@@ -56,10 +56,16 @@ class PrepareVideo:
 
         self.original_id = original_id
 
+    """
+    Метод для добавления субтитров
+    """
     def set_subtitles(self, subtitles, position: int, color: int, bg_color: int, style: int):
         # todo: Реализовать логику добавления эмодзи в субтитры
         pass
 
+    """
+    Метод для добавления фоновой музыки
+    """
     def set_background_music(self, music_path: str, volume: float = 1, offset: int = 0, finish: int = 0):
 
         # Указываем аудиодорожку
@@ -81,10 +87,16 @@ class PrepareVideo:
         # Устанавливаем аудиодорожку видео
         self.clip = self.clip.set_audio(final_audio)
 
+    """
+    Метод для добавления слежки за лицами
+    """
     def set_face_tracking(self):
         # todo: Подумать над реализацией этой идеи
         pass
 
+    """
+    Метод для рендера видео
+    """
     def render(self) -> str | None:
 
         path = get_random_mp4_path()
