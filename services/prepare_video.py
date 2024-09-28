@@ -4,6 +4,7 @@ import random
 from moviepy.editor import *
 
 from services.fileserver_client import FileServerClient
+from services.lama_client import updated_subtitres
 from services.prepare_video_extensions.formatting_video import FormattingVideo
 from services.prepare_video_extensions.generation_subtitles import generate_subtitles, offset_subtitles_for_shorts, \
     animate_subtitles, generate_headline
@@ -67,6 +68,8 @@ class PrepareVideo:
 
         # Сдвиг субтитр
         subtitles = offset_subtitles_for_shorts(json.loads(subtitles.replace("'", '"')), timestamp_start)
+
+        updated_subtitres(subtitles)
 
         # Все текстовые элементы
         subtitles_clips = generate_subtitles(subtitles, position, font_name, color, bg_color, style)

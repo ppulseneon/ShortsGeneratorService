@@ -67,8 +67,8 @@ def prepare_video(data):
         if subtitles != -1:
 
             # валидация полей
-            if not subtitles_font or not subtitles_color or not subtitles_json:
-                raise Exception(f"Not all fields of subtitles have been transferred")
+            # if not subtitles_font or not subtitles_color or not subtitles_json:
+            #     raise Exception(f"Not all fields of subtitles have been transferred")
 
             subtitles_primary_color = (subtitles_bg_color_r, subtitles_bg_color_g, subtitles_bg_color_b)
 
