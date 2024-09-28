@@ -129,6 +129,14 @@
           "type": "integer",
           "description": "Тип субтитров, где значение от 0 до 2 (-1 обозначает, что их нет)"
         },
+        "headline":{
+          "type": "string",
+          "description": "Текст сверху видео, доступен только если субтитры посредине или снизу"
+        },
+        "headline_color":{
+          "type": "string",
+          "description": "Цвет headline в любом формате"
+        },
         "subtitles_json":{
           "type": "string",
           "description": "Субтитры"

@@ -5,7 +5,8 @@ from moviepy.editor import *
 
 from services.fileserver_client import FileServerClient
 from services.prepare_video_extensions.formatting_video import FormattingVideo
-from services.prepare_video_extensions.generation_subtitles import generate_subtitles, offset_subtitles_for_shorts
+from services.prepare_video_extensions.generation_subtitles import generate_subtitles, offset_subtitles_for_shorts, \
+    animate_subtitles, generate_headline
 from tools.paths import get_random_mp4_path
 
 
@@ -61,7 +62,7 @@ class PrepareVideo:
     """
     Метод для добавления субтитров
     """
-    def set_subtitles(self, subtitles, timestamp_start: float, position: int, font_name: str, color: int, bg_color: int, style: int):
+    def set_subtitles(self, subtitles, timestamp_start: float, position: int, font_name: str, color: str, bg_color: (int, int, int), style: int):
         # todo: Реализовать логику добавления эмодзи в субтитры
 
         # Сдвиг субтитр
@@ -70,8 +71,19 @@ class PrepareVideo:
         # Все текстовые элементы
         subtitles_clips = generate_subtitles(subtitles, position, font_name, color, bg_color, style)
 
+        # Анимированные клипы
+        # subtitles_clips = animate_subtitles(subtitles_clips, position)
+
         # Объедините видео и текстовые клипы
         self.clip = CompositeVideoClip([self.clip] + subtitles_clips)
+
+    """
+        Метод для добавления текста сверху
+    """
+    def set_headline(self, headline, color):
+        result = generate_headline(self.clip, headline, self.clip.duration, color)
+
+        self.clip = result
 
     """
     Метод для добавления фоновой музыки

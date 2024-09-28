@@ -7,7 +7,8 @@ subtitles = "[{ 'timestamp': [ 0, 2.06 ], 'text': 'быть талант кор�
 def test_font_fade():
     short_timestamp = (0, 9)
     prepare = PrepareVideo(source, short_timestamp, 0, None, 1)
-    prepare.set_subtitles(subtitles, short_timestamp[0], 2, '', 'white', (0, 0, 0), 0)
+    prepare.set_subtitles(subtitles, short_timestamp[0], 1, '', 'white', (0, 0, 0), 1)
+    prepare.set_headline('Подписывайтесь на мой телеграм канал', 'white')
     prepare.render_with_path('result.mp4')
 
 test_font_fade()
