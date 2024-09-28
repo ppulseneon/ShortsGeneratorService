@@ -1,9 +1,11 @@
+import json
 import random
 
 from moviepy.editor import *
 
 from services.fileserver_client import FileServerClient
 from services.prepare_video_extensions.formatting_video import FormattingVideo
+from services.prepare_video_extensions.generation_subtitles import generate_subtitles, offset_subtitles_for_shorts
 from tools.paths import get_random_mp4_path
 
 
@@ -59,9 +61,17 @@ class PrepareVideo:
     """
     Метод для добавления субтитров
     """
-    def set_subtitles(self, subtitles, position: int, color: int, bg_color: int, style: int):
+    def set_subtitles(self, subtitles, timestamp_start: float, position: int, font_name: str, color: int, bg_color: int, style: int):
         # todo: Реализовать логику добавления эмодзи в субтитры
-        pass
+
+        # Сдвиг субтитр
+        subtitles = offset_subtitles_for_shorts(json.loads(subtitles.replace("'", '"')), timestamp_start)
+
+        # Все текстовые элементы
+        subtitles_clips = generate_subtitles(subtitles, position, font_name, color, bg_color, style)
+
+        # Объедините видео и текстовые клипы
+        self.clip = CompositeVideoClip([self.clip] + subtitles_clips)
 
     """
     Метод для добавления фоновой музыки
@@ -98,9 +108,14 @@ class PrepareVideo:
     Метод для рендера видео
     """
     def render(self) -> str | None:
-
         path = get_random_mp4_path()
-        self.clip.write_videofile(path)
+        return self.render_with_path(path)
+
+    """
+        Метод для рендера видео
+    """
+    def render_with_path(self, path: str) -> str | None:
+        self.clip.write_videofile(path, threads=20)
 
         fileserver = FileServerClient()
 

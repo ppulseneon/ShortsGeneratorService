@@ -145,9 +145,17 @@
           "type": "string",
           "description": "Цвет текста субтитров (в любом формате)"
         },
-        "subtitles_primary_color": {
-          "type": "string",
-          "description": "Цвет фона или обводки субтитров (в любом формате)"
+        "subtitles_bg_color_r": {
+          "type": "integer",
+          "description": "Background red point"
+        },
+        "subtitles_bg_color_g": {
+          "type": "integer",
+          "description": "Background green point"
+        },
+        "subtitles_bg_color_b": {
+          "type": "integer",
+          "description": "Background blue point"
         },
         "face_focusing": {
           "type": "boolean",

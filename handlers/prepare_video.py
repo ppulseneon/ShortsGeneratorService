@@ -11,6 +11,7 @@ required_fields = {
     'short_timestamps_start': float,
     'short_timestamps_end': float,
     'music_file_type': int,
+    'subtitles': int
 }
 
 """
@@ -46,10 +47,29 @@ def prepare_video(data):
         music_offset = data.get('music_offset')
         music_finish = data.get('music_finish')
 
+        subtitles_json = data.get('subtitles_json')
+        subtitles_position = data.get('subtitles_position')
+        subtitles_font = data.get('subtitles_font')
+        subtitles_color = data.get('subtitles_color')
+
+        subtitles_bg_color_r = data.get('subtitles_bg_color_r')
+        subtitles_bg_color_g = data.get('subtitles_bg_color_g')
+        subtitles_bg_color_b = data.get('subtitles_bg_color_b')
 
         short_timestamp = (short_timestamp_start, short_timestamp_end)
 
         prepare = PrepareVideo(video, short_timestamps=short_timestamp, primary_video_path=primary_video_path, format_type=format_type, original_id=original_id)
+
+        # Проверка наложения субтитров
+        if subtitles != -1:
+
+            # валидация полей
+            if not subtitles_font or not subtitles_color or not subtitles_json:
+                raise Exception(f"Not all fields of subtitles have been transferred")
+
+            subtitles_primary_color = (subtitles_bg_color_r, subtitles_bg_color_g, subtitles_bg_color_b)
+
+            prepare.set_subtitles(subtitles_json, short_timestamp_start, subtitles_position, subtitles_font, subtitles_color, subtitles_primary_color, subtitles)
 
         # Проверка наложения фоновой музыки
         if music_file_type != -1:
@@ -63,7 +83,7 @@ def prepare_video(data):
 
             # По файлу
             if music_file_type == 1:
-                music_path = get_static_file(music)
+                music_path = get_static_file('music', music)
 
             # По ссылке
             if music_file_type == 1:
@@ -71,7 +91,7 @@ def prepare_video(data):
                 download_media(music, music_path)
 
             # валидация полей
-            if music_volume or music_finish or music_offset:
+            if not music_volume or not music_finish or not music_offset:
                 raise Exception(f"Not all fields of music have been transferred")
 
             prepare.set_background_music(music_path, music_volume, music_offset, music_finish)
