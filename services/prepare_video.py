@@ -115,7 +115,7 @@ class PrepareVideo:
         Метод для рендера видео
     """
     def render_with_path(self, path: str) -> str | None:
-        self.clip.write_videofile(path, threads=20)
+        self.clip.write_videofile(path)
 
         fileserver = FileServerClient()
 

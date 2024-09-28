@@ -80,7 +80,7 @@ def generate_subtitles_with_background(subtitles, position: int, font_name: str,
     # Проходимся по всем субтитрам
     for subtitle in subtitles:
         start_time, end_time = subtitle["timestamp"]
-        text_clip = TextClip(subtitle['text'], font='Roboto', fontsize=52, color=color)
+        text_clip = TextClip(subtitle['text'], font='Century-Gothic-Bold-Italic', fontsize=48, color=color)
         text_clip = text_clip.set_duration(end_time - start_time)
         text_clip = text_clip.set_start(start_time)
 
