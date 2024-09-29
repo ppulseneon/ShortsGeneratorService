@@ -13,7 +13,7 @@ required_fields = {
 """
 Обработчик route получения превью
 """
-def prepare_video(data):
+def prepare_preview(data):
 
     # Валидируем обязательные поля
     is_valid, error_message = validate_required_fields(data, required_fields)

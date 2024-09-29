@@ -32,6 +32,33 @@
           }
         }
       },
+      "/video/preview": {
+        "post": {
+          "description": "Сгенерировать превью для видео",
+          "consumes": [
+            "application/json"
+          ],
+          "produces": [
+            "application/json"
+          ],
+          "responses": {
+            "200": {
+              "description": "Список форматов видео"
+            }
+          },
+          "parameters": [
+              {
+              "name": "Data",
+              "in": "body",
+              "description": "Тело запроса",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/VideoPreviewPrepareModel"
+              }
+            }
+          ]
+        }
+      },
       "/video/format_type": {
         "get": {
           "description": "Получить список возможных форматов видео",
@@ -188,6 +215,24 @@
         "music_finish": {
           "type": "number",
           "description": "Смещение конца трека"
+        }
+      },
+       "required": ["video", "format_type", "subtitles", "face_focusing", "music_file_type"]
+    },
+    "VideoPreviewPrepareModel": {
+      "type": "object",
+      "properties": {
+        "screenshot": {
+          "type": "string",
+          "description": "Изображение интересного момента"
+        },
+        "title": {
+          "type": "string",
+          "description": "Название шортса"
+        },
+        "position": {
+          "type": "integer",
+          "description": "Положение названия от 0 до 2"
         }
       },
        "required": ["video", "format_type", "subtitles", "face_focusing", "music_file_type"]

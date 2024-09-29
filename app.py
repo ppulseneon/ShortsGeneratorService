@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, redirect
 
+from handlers.prepare_preview import prepare_preview
 from handlers.prepare_video import prepare_video
 from settings.static_files import fonts_list, format_types_list, primary_videos, music_list
 from settings.swagger_settings import swagger_ui_blueprint, SWAGGER_URL
@@ -30,9 +31,9 @@ def create_prepare_video():
 """
 Получить превью для Short
 """
-@app.route('/preview', methods=['POST'])
+@app.route('/video/preview', methods=['POST'])
 @cross_origin(origins="*")
-def create_prepare_video():
+def create_prepare_preview():
     data = request.get_json()
     result = prepare_preview(data)
     return result
