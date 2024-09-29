@@ -7,7 +7,7 @@ from services.fileserver_client import FileServerClient
 from services.lama_client import updated_subtitres
 from services.prepare_video_extensions.formatting_video import FormattingVideo
 from services.prepare_video_extensions.generation_subtitles import generate_subtitles, offset_subtitles_for_shorts, \
-    animate_subtitles, generate_headline
+    animate_subtitles, generate_headline, cut_subtitles_by_timestamp, generate_emotions
 from tools.paths import get_random_mp4_path
 
 
@@ -16,7 +16,6 @@ class PrepareVideo:
     """
     Класс, предназначенный для создания коротких видео и превью для них
     """
-
     def __init__(self, video_path: str, short_timestamps: (float, float), original_id: int, primary_video_path: str = None, format_type: int = 0):
 
         # Формируем продолжительность короткого видео
@@ -30,6 +29,7 @@ class PrepareVideo:
 
         # Устанавливаем интересное видео
         if primary_video_path is not None:
+            # self.primary_clip = VideoFileClip(primary_video_path).subclip(0, self.clip.duration)
             self.primary_clip = VideoFileClip(primary_video_path)
 
             # Определяем рамки дополнительного клипа
@@ -45,13 +45,14 @@ class PrepareVideo:
                 primary_timestamp_border = self.primary_clip.duration - self.duration
 
                 # Получаем рандомный край видео
-                primary_timestamp_end = random.randint(self.duration, primary_timestamp_border)
+                primary_timestamp_end = random.randint(int(self.duration), int(primary_timestamp_border))
 
                 # Определяем начало и конец
                 primary_timestamp = (primary_timestamp_end - self.duration, primary_timestamp_end)
 
                 # Устанавливаем временные рамки доп. Видео
                 self.primary_clip = self.primary_clip.subclip(primary_timestamp[0], primary_timestamp[1])
+                self.primary_clip = self.primary_clip.set_duration(self.clip.duration)
         else:
             self.primary_clip = None
 
@@ -63,13 +64,17 @@ class PrepareVideo:
     """
     Метод для добавления субтитров
     """
-    def set_subtitles(self, subtitles, timestamp_start: float, position: int, font_name: str, color: str, bg_color: (int, int, int), style: int):
+    def set_subtitles(self, subtitles, timestamp_start: float, timestamp_end: float, position: int, font_name: str, color: str, bg_color: (int, int, int), style: int, emotions):
         # todo: Реализовать логику добавления эмодзи в субтитры
 
-        # Сдвиг субтитр
-        subtitles = offset_subtitles_for_shorts(json.loads(subtitles.replace("'", '"')), timestamp_start)
+        # Обрезаем субтитры
+        subtitles = cut_subtitles_by_timestamp(json.loads(subtitles.replace("'", '"')), timestamp_start, timestamp_end)
 
-        updated_subtitres(subtitles)
+        # Сдвиг субтитр
+        subtitles = offset_subtitles_for_shorts(subtitles, timestamp_start)
+
+        # Получаем субтитры с эмоциями эмоции
+        subtitles = updated_subtitres(subtitles)
 
         # Все текстовые элементы
         subtitles_clips = generate_subtitles(subtitles, position, font_name, color, bg_color, style)
@@ -77,8 +82,18 @@ class PrepareVideo:
         # Анимированные клипы
         # subtitles_clips = animate_subtitles(subtitles_clips, position)
 
-        # Объедините видео и текстовые клипы
-        self.clip = CompositeVideoClip([self.clip] + subtitles_clips)
+        if emotions:
+            # Все клипы эмоций
+            emotions_clips = generate_emotions(subtitles, position)
+
+            # Объедините видео и текстовые клипы
+            self.clip = CompositeVideoClip([self.clip] + subtitles_clips + emotions_clips)
+
+        else:
+            # Объедините видео и текстовые клипы
+            self.clip = CompositeVideoClip([self.clip] + subtitles_clips)
+
+
 
     """
         Метод для добавления текста сверху
@@ -97,7 +112,7 @@ class PrepareVideo:
         audio_clip = AudioFileClip(music_path)
 
         # Подрезаем начало и конец накладываемого трека
-        audio_clip = audio_clip.subclip(offset, audio_clip.duration - finish)
+        audio_clip = audio_clip.subclip(offset, self.clip.duration - finish)
 
         # Проверка тречка
         if audio_clip.duration == 0:
@@ -105,6 +120,9 @@ class PrepareVideo:
 
         # Получаем текущую дорожку из видео
         clip_audio = self.clip.audio
+
+        # Устанавливаем громкость
+        audio_clip = audio_clip.volumex(volume)
 
         # Смешиваем обе дорожки в одну
         final_audio = CompositeAudioClip([clip_audio, audio_clip])
@@ -134,6 +152,8 @@ class PrepareVideo:
 
         fileserver = FileServerClient()
 
+        print(f'Saved video: {path}')
+
         # Загружаем шортс на сервер
         upload_result = fileserver.upload_short(path)
 
@@ -145,12 +165,12 @@ class PrepareVideo:
         bind_result = fileserver.binding_short(upload_result, self.original_id)
 
         # Проверяем результат
-        if not bind_result:
-            return None
+        # if not bind_result:
+        #     return None
 
         # Удаляем временные файлы
-        os.remove(self.main_clip.path)
-        os.remove(path)
+        # os.remove(self.main_clip.path)
+        # os.remove(path)
 
         print(f'Clip was rendered')
         return upload_result

@@ -1,7 +1,5 @@
 import re
-
 import requests
-import json
 
 def extract_content_between_brackets(text):
     start_marker = "```json"
@@ -22,7 +20,7 @@ def updated_subtitres(subtitles):
         "data": [
             {
                 "role": "user",
-                "content": f"I have json. In each element of the text array, define a common emotions and return for one element one emotion in the 'emotions' field. Return only json. Emotions list: anger, disgust, ethusiasm, fear, guilt, joy, neutral, sadness, shame, surprise. Json: {subtitles}"
+                "content": f"In each element of the text array, define a common emotions and return for one element one emotion in the 'emotion' field. Return only json. Emotions list: anger, disgust, enthusiasm, fear, guilt, joy, neutral, sadness, shame, surprise. Response format: [{{ 'timestamp': [value, value], 'text': 'text', 'emotion': 'emotion' }}].  Json: {subtitles}"
             }
         ]
     }
@@ -32,23 +30,32 @@ def updated_subtitres(subtitles):
         'Content-Type': 'application/json'
     }
 
-    # Make the POST request
-    response = requests.post(url, json=data, headers=headers)
+    try:
+        response = requests.post(url, json=data, headers=headers)
 
-    # Check the response status code and content
-    # print("Status code: ", response.status_code)
-    # print("Response content: ", response.json())
+        response_json = response.json()['response']
 
-    response_json = response.json()['response']
+        emoji_subtitles = extract_content_between_brackets(response_json)
 
-    print(response_json)
+        # Удаление символов новой строки
+        emoji_subtitles = emoji_subtitles.replace("\n", "")
+        emoji_subtitles = emoji_subtitles.replace("`", "")
 
-    emoji_subtitles = extract_content_between_brackets(response_json)
+        result = emoji_subtitles + ']'
 
-    print(emoji_subtitles)
+        emotions = re.findall(r'"emotion":\s*"([^"]+)"', result)
 
-    # Удаление символов новой строки
-    emoji_subtitles = str.replace("\n", "")
+        print('lama result ' + result)
 
-    return emoji_subtitles + ']'
+        print(f'emotions: {len(emotions)} / subtitles: {len(subtitles)}')
 
+        for i in range(len(subtitles)):
+            subtitles[i]['emotion'] = emotions[i]
+
+        return subtitles
+
+    except Exception as e:
+        for i in range(len(subtitles)):
+            subtitles[i]['emotion'] = None
+
+        return subtitles

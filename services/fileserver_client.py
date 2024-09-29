@@ -19,6 +19,7 @@ class FileServerClient:
         }
 
         response = requests.get(url, params=params)
+        print(response.json())
 
         if response.status_code == 200:
             return True
@@ -39,6 +40,8 @@ class FileServerClient:
             }
 
             response = requests.post(url, headers=headers, files=files)
+
+            print(response.json())
 
             if response.status_code == 200:
                 return response.json()

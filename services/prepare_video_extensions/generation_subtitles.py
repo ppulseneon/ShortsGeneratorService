@@ -1,18 +1,25 @@
 import random
-import re
+from cairosvg import svg2png
 import string
 import textwrap
 
 import numpy as np
-from moviepy.video.VideoClip import TextClip, ColorClip
+from moviepy.video.VideoClip import TextClip, ColorClip, ImageClip
 from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
 
+import settings
+from settings import static_files
+from settings.settings import STATIC_FILES_FOLDER
 from tools.text import insert_spaces_before_uppercase
 
 # Определяем кастомные позиции текста
-center = ('center', 'center')
-top = ('center', 200)
+center = ('center', 960)
+top = ('center', 'center')
 bottom = ('center', 1920 - 500)
+
+center_emotion = ('center', 960 + 200)
+top_emotion = ('center', 100)
+bottom_emotion = ('center', 1920 - 500 - 200)
 
 def random_movement(clip, t):
     movement_range = 20
@@ -28,7 +35,6 @@ def smooth_random_movement(clip, t):
     return (clip.w / 2 + x_offset, clip.h / 2 + y_offset)
 
 def get_position(position):
-    print(position)
     match position:
         case 0:
             return top
@@ -39,12 +45,32 @@ def get_position(position):
 
     raise ValueError(f"Invalid subtitle position: {position}")
 
+def get_emotion_position(position):
+    match position:
+        case 0:
+            return top_emotion
+        case 1:
+            return center_emotion
+        case 2:
+            return bottom_emotion
+
+    raise ValueError(f"Invalid subtitle position: {position}")
+
 def offset_subtitles_for_shorts(subtitles, offset):
     for subtitle in subtitles:
         subtitle['timestamp'][0] = subtitle['timestamp'][0] - offset
         subtitle['timestamp'][1] = subtitle['timestamp'][1] - offset
 
     return subtitles
+
+def cut_subtitles_by_timestamp(subtitles, start_timestamp, end_timestamp):
+    result = []
+
+    for subtitle in subtitles:
+        if subtitle['timestamp'][0] >= start_timestamp and subtitle['timestamp'][1] <= end_timestamp:
+            result.append(subtitle)
+
+    return result
 
 def prepare_headline(headline):
     headline = textwrap.fill(headline, width=25)
@@ -57,7 +83,8 @@ def prepare_subtitles(subtitles):
         subtitle['text'] = textwrap.fill(subtitle['text'], width=25)
 
         for p in string.punctuation:
-            subtitle['text'] = subtitle['text'].replace(p, '')
+            if p != '-':
+                subtitle['text'] = subtitle['text'].replace(p, '')
 
         subtitle['text'] = subtitle['text'].upper()
 
@@ -66,8 +93,6 @@ def prepare_subtitles(subtitles):
 def animate_subtitles(clips, position):
     animated_clips = []
     for clip in clips:
-        # animated_clip = clip.set_position(lambda t: random_movement(clip, t))
-        # Alternatively, use smooth_random_movement for smoother motion
         animated_clip = clip.set_position(lambda t: smooth_random_movement(clip, t))
         animated_clips.append(animated_clip)
 
@@ -97,6 +122,26 @@ def generate_subtitles(subtitles, position: int, font_name: str, color: str, bg_
             result = generate_subtitles_with_outline(subtitles, position, font_name, color, bg_color)
         case 2:
             result = generate_subtitles_with_background(subtitles, position, font_name, color, bg_color)
+
+    return result
+
+def generate_emotions(subtitles, position):
+    result = []
+
+    for subtitle in subtitles:
+        if subtitle["emotion"] is None:
+            continue
+
+        try:
+            start_time, end_time = subtitle["timestamp"]
+            random_icon_path = random.choice(static_files.emotions_files[subtitle['emotion']])
+            icon_path = STATIC_FILES_FOLDER + '/icons/' + random_icon_path
+            icon = ImageClip(icon_path, duration=end_time - start_time)
+            icon = icon.set_position(get_emotion_position(position))
+            icon = icon.set_start(start_time)
+            result.append(icon)
+        except Exception as e:
+            print(e)
 
     return result
 
