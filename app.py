@@ -28,6 +28,16 @@ def create_prepare_video():
     return result
 
 """
+Получить превью для Short
+"""
+@app.route('/preview', methods=['POST'])
+@cross_origin(origins="*")
+def create_prepare_video():
+    data = request.get_json()
+    result = prepare_preview(data)
+    return result
+
+"""
 Получить доступные форматы видео
 """
 @app.route('/video/format_type', methods=['GET'])

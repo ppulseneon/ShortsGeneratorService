@@ -115,7 +115,7 @@ class FormattingVideo:
 
         resized_clip = self.main_clip.resize((width, height9x16))
 
-        self.clip = CompositeVideoClip([self.blank_clip, resized_clip.set_position('center')])
+        self.blank_clip = CompositeVideoClip([self.blank_clip, resized_clip.set_position('center')])
 
     """
         Метод, для преобразования видео по шаблону "Сверху видео, снизу доп. видео"
@@ -127,7 +127,7 @@ class FormattingVideo:
         resized_clip = self.main_clip.resize((width, height9x16))
         resized_primary_clip = self.primary_clip.resize((width, height9x16))
 
-        self.clip = CompositeVideoClip([self.blank_clip, resized_clip.set_position('top'), resized_primary_clip.set_position('bottom')])
+        self.blank_clip = CompositeVideoClip([self.blank_clip, resized_clip.set_position('top'), resized_primary_clip.set_position('bottom')])
 
     """
         Метод, для преобразования видео по шаблону "Сверху видео, снизу доп. видео"
@@ -139,4 +139,4 @@ class FormattingVideo:
         resized_clip = self.main_clip.resize((width, height9x16))
         resized_primary_clip = self.primary_clip.resize((width, height9x16))
 
-        self.clip = CompositeVideoClip([self.blank_clip, resized_clip.set_position('bottom'), resized_primary_clip.set_position('top')])
+        self.blank_clip = CompositeVideoClip([self.blank_clip, resized_clip.set_position('bottom'), resized_primary_clip.set_position('top')])
